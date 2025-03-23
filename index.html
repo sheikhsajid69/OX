@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OXO | S4JID</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #6a11cb, #2575fc);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* Container and Game Interface */
+.container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    width: 100%;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 300px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    position: relative;
+}
+
+.cell:hover {
+    background: #f8f8f8;
+    transform: scale(1.05);
+}
+
+/* X and O Styles */
+.cell.x::before {
+    content: 'X';
+    color: #ff6b6b;
+    animation: popIn 0.3s ease;
+}
+
+.cell.o::before {
+    content: 'O';
+    color: #4ecdc4;
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Reset Button */
+#reset {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    background: #333;
+    color: #fff;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+#reset:hover {
+    background: #555;
+}
+
+/* Status Text */
+#status {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+/* Play Again Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+#play-again-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    background: #333;
+    color: #fff;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+#play-again-button:hover {
+    background: #555;
+}
+
+/* Animation for Modal */
+.animate__animated {
+    animation-duration: 0.5s;
+}
+
+@keyframes zoomIn {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+
+.animate__zoomIn {
+    animation-name: zoomIn;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .cell {
+        font-size: 1.5rem;
+    }
+
+    #status {
+        font-size: 1rem;
+    }
+}
+/* Footer Styles */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.social-links .created-by {
+    font-size: 0.9rem;
+    color: #333;
+    margin-right: 10px;
+}
+
+.social-links a {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.social-links a img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.social-links a:hover {
+    transform: scale(1.2);
+}
+
+/* Responsive Footer */
+@media (max-width: 600px) {
+    .social-links {
+        gap: 8px;
+    }
+
+    .social-links .created-by {
+        font-size: 0.8rem;
+    }
+
+    .social-links a {
+        width: 20px;
+        height: 20px;
+    }
+}
+</style>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <button id="reset">Reset Game</button>
+        <p id="status">It's X's turn</p>
+    </div>
+
+    <!-- Play Again Modal -->
+    <div id="play-again-modal" class="modal">
+        <div class="modal-content animate__animated animate__zoomIn">
+            <p id="modal-message"></p>
+            <button id="play-again-button">Play Again</button>
+        </div>
+    </div>
+  <footer>
+    <div class="social-links animate__animated animate__slideInUp">
+        <span class="created-by">Developed by S4JID | Find me</span>
+        <a href="https://x.com/SheikhSajid69" target="_blank" title="X">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X Logo">
+        </a>
+        <a href="https://instagram.com/the_sajidm69" target="_blank" title="Instagram">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram Logo">
+        </a>
+        <a href="https://github.com/sheikhsajid69" target="_blank" title="GitHub">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub Logo">
+        </a>
+        <a href="https://linkedin.com/in/sheikh-sajid-m" target="_blank" title="LinkedIn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn Logo">
+        </a>
+        <a href="https://medium.com/@sheikhsajid69.com" target="_blank" title="Medium">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Medium_logo_Monogram.svg" alt="Medium Logo">
+        </a>
+        <a href="mailto:sajidms1209@icloud.com" title="Mail">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Mail_%28iOS%29.svg" alt="Mail Logo">
+        </a>
+        <a href="https://open.spotify.com/user/316v53vlmm3zfjxoubogax3rwkom?si=507800f1184a4bea" target="_blank" title="Spotify">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify Logo">
+        </a>
+        <a href="https://topmate.io/sheikhsajid69" target="_blank" title="Topmate">
+            <img src="https://topmate.io/favicon.ico" alt="Topmate Logo" style="border-radius: 50%;">
+        </a>
+    </div>
+</footer>
+
+    <script>
+const cells = document.querySelectorAll('.cell');
+const statusText = document.getElementById('status');
+const resetButton = document.getElementById('reset');
+const playAgainModal = document.getElementById('play-again-modal');
+const modalMessage = document.getElementById('modal-message');
+const playAgainButton = document.getElementById('play-again-button');
+
+let currentPlayer = 'X';
+let gameActive = true;
+let gameState = ['', '', '', '', '', '', '', '', ''];
+
+const winningConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
+
+function handleCellClick(event) {
+    const clickedCell = event.target;
+    const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+    if (gameState[clickedCellIndex] !== '' || !gameActive) {
+        return;
+    }
+
+    gameState[clickedCellIndex] = currentPlayer;
+    clickedCell.classList.add(currentPlayer.toLowerCase()); // Add class for X or O
+    checkForWinner();
+}
+
+function checkForWinner() {
+    let roundWon = false;
+
+    for (let i = 0; i < winningConditions.length; i++) {
+        const [a, b, c] = winningConditions[i];
+        if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '') {
+            continue;
+        }
+        if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+            roundWon = true;
+            break;
+        }
+    }
+
+    if (roundWon) {
+        modalMessage.textContent = `Player ${currentPlayer} wins!`;
+        showModal();
+        gameActive = false;
+        return;
+    }
+
+    if (!gameState.includes('')) {
+        modalMessage.textContent = 'It\'s a draw!';
+        showModal();
+        gameActive = false;
+        return;
+    }
+
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    statusText.textContent = `It's ${currentPlayer}'s turn`;
+}
+
+function showModal() {
+    playAgainModal.style.display = 'flex';
+}
+
+function resetGame() {
+    gameState = ['', '', '', '', '', '', '', '', ''];
+    gameActive = true;
+    currentPlayer = 'X';
+    statusText.textContent = `It's ${currentPlayer}'s turn`;
+    cells.forEach(cell => {
+        cell.classList.remove('x', 'o'); // Remove X and O classes
+    });
+    playAgainModal.style.display = 'none';
+}
+
+cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+resetButton.addEventListener('click', resetGame);
+playAgainButton.addEventListener('click', resetGame);
+</script>
+</body>
+</html>
